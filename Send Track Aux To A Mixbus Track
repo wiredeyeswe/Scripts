@@ -1,0 +1,60 @@
+-- Function to remove all sends from a track to the Master track
+function removeSendsToMaster(track)
+    for i = reaper.GetTrackNumSends(track, 0) - 1, 0, -1 do
+        local sendTrack = reaper.GetTrackSendInfo_Value(track, 0, i, "P_DESTTRACK")
+        if sendTrack == reaper.GetMasterTrack(0) then
+            reaper.RemoveTrackSend(track, 0, i)
+        end
+    end
+end
+
+-- Function to create a send to the last track named "MIXBUS"
+function createSendToMixbus(selectedTracks)
+    local mixbusTrack = nil
+    
+    for i = 0, reaper.CountTracks(0) - 1 do
+        local track = reaper.GetTrack(0, i)
+        local _, trackName = reaper.GetTrackName(track)
+        
+        if trackName == "MIXBUS" then
+            mixbusTrack = track
+            break
+        end
+    end
+    
+    if mixbusTrack then
+        for i = 1, #selectedTracks do
+            local track = selectedTracks[i]
+            reaper.CreateTrackSend(track, mixbusTrack)
+        end
+    else
+        reaper.ShowMessageBox("No track named 'MIXBUS' found.", "Error", 0)
+    end
+end
+
+-- Main function
+function main()
+    local selectedTracks = {}
+    
+    for i = 0, reaper.CountSelectedTracks(0) - 1 do
+        local track = reaper.GetSelectedTrack(0, i)
+        table.insert(selectedTracks, track)
+    end
+    
+    if #selectedTracks > 0 then
+        reaper.Undo_BeginBlock()
+        
+        for i = 1, #selectedTracks do
+            local track = selectedTracks[i]
+            removeSendsToMaster(track)
+        end
+        
+        createSendToMixbus(selectedTracks)
+        reaper.Undo_EndBlock("Modify Sends", -1)
+    else
+        reaper.ShowMessageBox("No tracks selected.", "Error", 0)
+    end
+end
+
+-- Run the main function
+main()
