@@ -1,0 +1,10 @@
+-- Get the current edit cursor position
+local cursorPosition = reaper.GetCursorPosition()
+
+-- Insert a marker at the cursor position with the name "Click"
+local markerIndex = reaper.AddProjectMarker2(0, false, cursorPosition, 0, "Click", -1, 0)
+
+-- Check if marker insertion was successful
+if markerIndex < 0 then
+    reaper.ShowMessageBox("Failed to insert marker.", "Error", 0)
+end
