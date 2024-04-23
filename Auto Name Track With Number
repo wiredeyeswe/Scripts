@@ -1,0 +1,23 @@
+-- Get the selected tracks
+selectedTracks = reaper.CountSelectedTracks(0)
+
+-- Check if there are selected tracks
+if selectedTracks > 0 then
+    -- Initialize a counter
+    counter = 1
+    
+    -- Loop through the selected tracks
+    for i = 0, selectedTracks - 1 do
+        -- Get the current selected track
+        track = reaper.GetSelectedTrack(0, i)
+        
+        -- Check if the track exists
+        if track then
+            -- Rename the track to "Bass X" where X is the counter
+            reaper.GetSetMediaTrackInfo_String(track, "P_NAME", "01 YOUR TRACK NAME HERE " .. counter, true)
+            
+            -- Increment the counter
+            counter = counter + 1
+        end
+    end
+end
