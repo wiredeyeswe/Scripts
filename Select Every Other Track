@@ -1,0 +1,26 @@
+-- Get the total number of tracks in the project
+local numTracks = reaper.CountTracks(0)
+
+-- Find the index of the first selected track (if any)
+local firstSelectedTrackIdx
+
+for i = 0, numTracks - 1 do
+    local track = reaper.GetTrack(0, i)
+    if reaper.IsTrackSelected(track) then
+        firstSelectedTrackIdx = i
+        break
+    end
+end
+
+-- If no track is selected, start from the first track
+if not firstSelectedTrackIdx then
+    firstSelectedTrackIdx = 0
+end
+
+-- Iterate through tracks and select every other track starting from the first selected track
+for i = firstSelectedTrackIdx, numTracks - 1, 2 do
+    local track = reaper.GetTrack(0, i)
+    
+    -- Select the track
+    reaper.SetTrackSelected(track, true)
+end
