@@ -1,0 +1,20 @@
+-- Get the number of selected tracks
+local numSelectedTracks = reaper.CountSelectedTracks(0)
+
+-- Loop through all selected tracks
+for i = 0, numSelectedTracks - 1 do
+    local selectedTrack = reaper.GetSelectedTrack(0, i)
+
+    if selectedTrack then
+        -- Get the current track name
+        local retval, trackName = reaper.GetTrackName(selectedTrack, "")
+
+        -- Check if the track name contains "New Track"
+        local modifiedName = string.gsub(trackName, "New Track", "")
+
+        -- If any modifications were made, set the track name to the modified name
+        if modifiedName ~= trackName then
+            reaper.GetSetMediaTrackInfo_String(selectedTrack, "P_NAME", modifiedName, true)
+        end
+    end
+end
